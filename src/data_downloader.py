@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import sys
 import os
+import re
 from tqdm import tqdm
 
 def download_data_from_url(dataset_url, dataset_path):
@@ -51,6 +52,11 @@ def decompress_zst(dataset_path):
     return data_list
 
 def download_data(args):
+    """
+    Download and decompress data from a URL, if it has not been downloaded yet
+        @param args: a dictionary containing the dataset URL and the path to save the dataset
+        @return data_list: a sorted list of the decompressed files
+    """
     dataset_url = args["dataset_url"]
     dataset_path = args["dataset_path"]
 
@@ -59,5 +65,10 @@ def download_data(args):
         download_data_from_url(dataset_url, dataset_path)
 
     data_list = decompress_zst(dataset_path)
+
+    # sort the data_list
+    data_list = sorted(data_list, key = lambda x: -int(re.search(r'\d+', x).group()))
+
+    data_list = data_list[:args["num_to_test"]]
 
     return data_list

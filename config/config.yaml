@@ -1,0 +1,3 @@
+algorithm: FIFO
+dataset_path: ../dataset
+dataset_url: https://ftp.pdl.cmu.edu/pub/datasets/twemcacheWorkload/cacheDatasets/cloudphysics/

@@ -35,7 +35,6 @@ def decompress_zst(dataset_path):
     """
     with os.scandir(dataset_path) as entries:
         data_list = []
-        os.chdir(dataset_path)
         for entry in tqdm(entries, desc = "Decompressing .zst files"):
             if entry.is_file() and entry.name.endswith(".zst"):
                 with open(entry, 'rb') as compressed_file:

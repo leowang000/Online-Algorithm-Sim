@@ -1,12 +1,6 @@
 import sys
 import struct
-from typing import NamedTuple, List
-
-class Request(NamedTuple):
-    timestamp: int
-    obj_id: int
-    obj_size: int
-    next_access_vtime: int
+from utils import Request
 
 class InputProcessor:
     def process_input(self, trace_file):
@@ -22,7 +16,6 @@ class InputProcessor:
         format_str = '<IQIq'
     
         record_size = struct.calcsize(format_str)
-        print ("record_size: ", record_size)
     
         requests = []
     

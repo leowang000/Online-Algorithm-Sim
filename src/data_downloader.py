@@ -57,8 +57,8 @@ def download_data(args):
         @param args: a dictionary containing the dataset URL and the path to save the dataset
         @return data_list: a sorted list of the decompressed files
     """
-    dataset_url = args["dataset_url"]
-    dataset_path = args["dataset_path"]
+    dataset_url = args.dataset_url
+    dataset_path = args.dataset_path
 
     if not os.path.exists(dataset_path):
         os.makedirs(dataset_path)
@@ -69,6 +69,6 @@ def download_data(args):
     # sort the data_list
     data_list = sorted(data_list, key = lambda x: -int(re.search(r'\d+', x).group()))
 
-    data_list = data_list[:args["num_to_test"]]
+    data_list = data_list[:args.num_to_test]
 
     return data_list

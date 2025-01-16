@@ -41,7 +41,7 @@ def main():
         print (f"Processing {trace_file}")
         requests = input_processor.process_input(trace_file)
 
-        scheduler = eval(args.algorithm)(args)
+        scheduler = eval(args.algorithm)(args.cache_size)
         result = scheduler.run(requests)
 
         with open(output_file, 'a') as f:

@@ -1,6 +1,6 @@
 import sys
 import struct
-from utils import Request
+from .utils import Request
 
 class InputProcessor:
     def process_input(self, trace_file):

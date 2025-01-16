@@ -4,7 +4,7 @@ import argparse
 import src.data_downloader as data_downloader
 from src.input_processor import InputProcessor
 from src.utils import MyNamespace
-from src.scheduler import FIFO
+from src.scheduler import FIFO, OPT
 
 def read_config(config_file):
     with open(config_file, 'r') as stream:
@@ -29,7 +29,7 @@ def main():
     print ("\n------------------------------------")
 
     input_processor = InputProcessor()
-    output_file = os.path.join(args.output_dir, args.algorithm + ".txt")
+    output_file = os.path.join(args.output_dir, args.algorithm + f"_{args.cache_size}" + ".txt")
 
     if not os.path.exists(output_file):
         open(output_file, 'w').close()

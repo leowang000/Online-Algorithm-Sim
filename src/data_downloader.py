@@ -45,6 +45,8 @@ def decompress_zst(dataset_path):
                             with dctx.stream_reader(compressed_file) as reader:
                                 shutil.copyfileobj(reader, destination)
                                 data_list.append(os.path.join(dataset_path, entry.name.rstrip('.zst')))
+                    else:
+                        data_list.append(os.path.join(dataset_path, entry.name.rstrip('.zst')))
     
     return data_list
 

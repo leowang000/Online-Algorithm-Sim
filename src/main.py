@@ -20,7 +20,8 @@ def main():
 
     traces_list = data_downloader.download_data(args)
 
-    print (args)
+    for trace in traces_list:
+        print (trace)
 
 if __name__ == "__main__":
     main()

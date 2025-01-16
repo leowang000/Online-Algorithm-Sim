@@ -12,6 +12,13 @@ else:  # Linux 和其他 Unix 系统
 
 ext_modules = [
     Extension(
+        'utils',
+        ['utils.cpp'],
+        include_dirs=[pybind11.get_include()],
+        language='c++',
+        extra_compile_args=extra_compile_args,
+    ),
+    Extension(
         'fifo',
         ['fifo.cpp'],
         include_dirs=[pybind11.get_include()],
@@ -19,8 +26,8 @@ ext_modules = [
         extra_compile_args=extra_compile_args,
     ),
     Extension(
-        'utils',
-        ['utils.cpp'],
+        'opt',
+        ['opt.cpp'],
         include_dirs=[pybind11.get_include()],
         language='c++',
         extra_compile_args=extra_compile_args,

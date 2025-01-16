@@ -1,11 +1,6 @@
 from types import SimpleNamespace
 from typing import NamedTuple, List
-
-class Request(NamedTuple):
-    timestamp: int
-    obj_id: int
-    obj_size: int
-    next_access_vtime: int
+from .cpp_utils import _parse_trace
 
 class MyNamespace(SimpleNamespace):
     def __str__(self):

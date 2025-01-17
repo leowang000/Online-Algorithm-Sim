@@ -44,11 +44,29 @@ class LRUScheduler : public Scheduler {
         Result run(std :: vector<Request>& requests) {
             // Initialize the cache misses
             auto result = Result(requests);
+
+            // auto unique_set = std :: set<uint64_t>();
             
             // uint32_t counter = 0;
             for (auto &request : requests) {
+                // counter++;
+
                 auto obj_id = request.obj_id;
                 auto last_access = request.timestamp;
+
+
+                // if (counter % 10000 == 0) {
+                //     std :: cerr << "Obj: " << obj_id << " Timestamp: " << last_access << std :: endl;
+                // }
+                // unique_set.insert(obj_id);
+                // auto print_cache = [&cache = this -> cache]() {
+                //     for (auto &obj : cache) {
+                //         std :: cerr << obj.obj_id << " ";
+                //     }
+                //     std :: cerr << std :: endl;
+                // };
+
+                // print_cache();
 
                 // first we check if the object is in the cache
                 auto is_in_cache = [&cache_set = this -> cache_set](const uint64_t& obj_id) {
@@ -61,13 +79,14 @@ class LRUScheduler : public Scheduler {
 
                 std :: set<LRUObject> :: iterator it;
                 if ((it = is_in_cache(obj_id)) == this -> cache_set.end()) {
+                    assert (*it.obj_id != obj_id);
                     // Not in the cache
                     result.cache_misses++;
 
                     // If the cache is full, remove the object that has the longest time to be nextly accessed
                     if (this -> cache.size() == this -> cache_size) {
                         auto evicted_obj = *this -> cache.begin();
-                        this -> cache.erase(this -> cache.begin());
+                        this -> cache.erase(evicted_obj);
                         this -> cache_set.erase(evicted_obj);
                     }
                 }
@@ -78,13 +97,18 @@ class LRUScheduler : public Scheduler {
                     // Remove the old object from the cache
                     auto obj = *it;
                     this -> cache.erase(obj);
-                    this -> cache_set.erase(it);
+                    this -> cache_set.erase(obj);
                 }
 
                 // Insert the object into the cache
                 auto obj = LRUObject(obj_id, last_access);
                 this -> cache.insert(obj);
                 this -> cache_set.insert(obj);
+
+                // print_cache();
+                // if (counter % 10000 == 0) {
+                //     std :: cerr << "Cache misses: " << result.cache_misses << " Unique objects: " << unique_set.size() << std :: endl;
+                // }
             }
 
             return result;

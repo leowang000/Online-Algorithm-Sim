@@ -91,6 +91,9 @@ class OPTScheduler : public Scheduler {
 
                 // Insert the object into the cache
                 auto obj = OPTObject(obj_id, next_access);
+                if (next_access != -1) {
+                    assert (obj_id != requests[next_access].obj_id);
+                }
                 this -> cache.insert(obj);
                 this -> cache_set.insert(obj);
             }

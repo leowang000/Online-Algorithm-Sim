@@ -19,6 +19,13 @@ ext_modules = [
         extra_compile_args=extra_compile_args,
     ),
     Extension(
+        'opt',
+        ['opt.cpp'],
+        include_dirs=[pybind11.get_include()],
+        language='c++',
+        extra_compile_args=extra_compile_args,
+    ),
+    Extension(
         'fifo',
         ['fifo.cpp'],
         include_dirs=[pybind11.get_include()],
@@ -26,8 +33,8 @@ ext_modules = [
         extra_compile_args=extra_compile_args,
     ),
     Extension(
-        'opt',
-        ['opt.cpp'],
+        'lifo',
+        ['lifo.cpp'],
         include_dirs=[pybind11.get_include()],
         language='c++',
         extra_compile_args=extra_compile_args,

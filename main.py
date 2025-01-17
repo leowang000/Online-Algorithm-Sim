@@ -4,7 +4,7 @@ import argparse
 import src.data_downloader as data_downloader
 from src.input_processor import InputProcessor
 from src.utils import MyNamespace
-from src.scheduler import FIFO, OPT
+from src.scheduler import OPT, FIFO, LIFO
 
 def read_config(config_file):
     with open(config_file, 'r') as stream:

@@ -20,13 +20,13 @@ def main():
     parser.add_argument("--config_file", type = str, default = "./config/config.yaml")
     parser.add_argument("--algorithm", type = str, default = "default")
     parser.add_argument("--cache_size", type = int, default = -1)
-    args = parser.parse_args()
-    args = read_config(args.config_file)
+    parse_args = parser.parse_args()
+    args = read_config(parse_args.config_file)
 
-    if parser.algorithm != "default":
-        args.algorithm = parser.algorithm
-    if parser.cache_size != -1:
-        args.cache_size = parser.cache_size
+    if parse_args.algorithm != "default":
+        args.algorithm = parse_args.algorithm
+    if parse_args.cache_size != -1:
+        args.cache_size = parse_args.cache_size
 
     print ("Practical Paging Algorithm Simulator")
     print (args)

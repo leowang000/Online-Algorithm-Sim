@@ -56,7 +56,7 @@ class LIFOScheduler : public Scheduler {
 namespace py = pybind11;
 
 PYBIND11_MODULE(lifo, m) {
-    // Bind the FIFOScheduler
+    // Bind the LIFO scheduler
     py::class_<LIFOScheduler>(m, "LIFO")
         .def(py::init<const uint64_t>())
         .def("run", &LIFOScheduler::run);

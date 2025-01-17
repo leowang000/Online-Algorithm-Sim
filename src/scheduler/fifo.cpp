@@ -56,7 +56,7 @@ class FIFOScheduler : public Scheduler {
 namespace py = pybind11;
 
 PYBIND11_MODULE(fifo, m) {
-    // Bind the FIFOScheduler
+    // Bind the FIFO scheduler
     py::class_<FIFOScheduler>(m, "FIFO")
         .def(py::init<const uint64_t>())
         .def("run", &FIFOScheduler::run);

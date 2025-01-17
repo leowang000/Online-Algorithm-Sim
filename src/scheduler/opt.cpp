@@ -102,7 +102,7 @@ class OPTScheduler : public Scheduler {
 namespace py = pybind11;
 
 PYBIND11_MODULE(opt, m) {
-    // Bind the FIFOScheduler
+    // Bind the OPT scheduler
     py::class_<OPTScheduler>(m, "OPT")
         .def(py::init<const uint64_t>())
         .def("run", &OPTScheduler::run);

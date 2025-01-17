@@ -4,3 +4,5 @@ output/
 **/*.so
 **/build/
 .vscode/
+data_process.py
+draw.py

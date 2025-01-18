@@ -22,14 +22,14 @@ struct LFUObject {
     }
 
     bool operator < (const LFUObject& other) const {
-        return this -> num_of_access < other.num_of_access;
+        return this -> num_of_access == other.num_of_access ? this -> obj_id < other.obj_id : this -> num_of_access < other.num_of_access;
     }
 };
 
 class LFUScheduler : public Scheduler {
     public:
         std :: set<LFUObject> cache;
-        std::set<LFUObject, std::function<bool(const LFUObject&, const LFUObject&)>> cache_set;
+        std :: set<LFUObject, std :: function<bool(const LFUObject&, const LFUObject&)>> cache_set;
 
         LFUScheduler(uint64_t cache_size) : Scheduler(cache_size), 
             cache_set([](const LFUObject& a, const LFUObject& b) {
@@ -45,9 +45,28 @@ class LFUScheduler : public Scheduler {
             // Initialize the cache misses
             auto result = Result(requests);
             
+            uint32_t counter = 0;
             for (auto &request : requests) {
                 auto obj_id = request.obj_id;
                 auto num_of_access = 1;
+
+                counter++;
+
+                // if (counter % 10000 == 0) {
+                //     std :: cerr << "Obj: " << obj_id << " Timestamp: " << last_access << std :: endl;
+                // }
+                // unique_set.insert(obj_id);
+                // auto print_cache = [&cache = this -> cache]() {
+                //     for (auto &obj : cache) {
+                //         std :: cerr << obj.obj_id << " ";
+                //     }
+                //     std :: cerr << std :: endl;
+                // };
+
+                // if (counter % 10000 == 0) {
+                    // std :: cerr << "Obj: " << obj_id << " Timestamp: " << request.timestamp << std :: endl;
+                    // print_cache();
+                // }
 
                 // first we check if the object is in the cache
                 auto is_in_cache = [&cache_set = this -> cache_set](const uint64_t& obj_id) {
@@ -59,12 +78,14 @@ class LFUScheduler : public Scheduler {
                 };
 
                 std :: set<LFUObject> :: iterator it;
+                it = is_in_cache(obj_id);
+                // std :: cerr << (it == this -> cache_set.end()) << std :: endl;
                 if ((it = is_in_cache(obj_id)) == this -> cache_set.end()) {
                     // Not in the cache
                     result.cache_misses++;
 
                     // If the cache is full, remove the object that has the longest time to be nextly accessed
-                    if (this -> cache.size() == this -> cache_size) {
+                    if (this -> cache_set.size() == this -> cache_size) {
                         auto evicted_obj = *this -> cache.begin();
                         this -> cache.erase(this -> cache.begin());
                         this -> cache_set.erase(evicted_obj);
@@ -85,6 +106,8 @@ class LFUScheduler : public Scheduler {
                 auto obj = LFUObject(obj_id, num_of_access);
                 this -> cache.insert(obj);
                 this -> cache_set.insert(obj);
+
+                // print_cache();
             }
 
             return result;

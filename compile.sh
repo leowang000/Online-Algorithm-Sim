@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Shell script to compile the required .so files for the python code
 
 cd src 

@@ -37,3 +37,5 @@ There's a simple example:
 ```
 python3 main.py --algorithm OPT --cache_size 64
 ```
+
+Besides, you can choose the dataset for free by changing the `dataset_url` and `num_to_test` in the `config/config.yaml`.

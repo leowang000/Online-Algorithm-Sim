@@ -4,7 +4,7 @@ import argparse
 import src.data_downloader as data_downloader
 from src.input_processor import InputProcessor
 from src.utils import MyNamespace
-from src.scheduler import OPT, FIFO, LIFO, LRU, LFU, Marking
+from src.scheduler import OPT, FIFO, LIFO, LRU, LFU, Marking, SVM
 
 def read_config(config_file):
     with open(config_file, 'r') as stream:
@@ -55,10 +55,7 @@ def main():
             print (f"Total number of requests: {result.total_requests}")
             print (f"Total number of unique pages: {result.unique_pages}")
             print (f"Total number of cache misses: {result.cache_misses}")
-            f.write(f"Trace file: {trace_file}\n")
-            f.write(f"Total number of requests: {result.total_requests}\n")
-            f.write(f"Total number of unique pages: {result.unique_pages}\n")
-            f.write(f"Total number of cache misses: {result.cache_misses}\n")
+            f.write(f"{trace_file}\t{result.total_requests}\t{result.unique_pages}\t{result.cache_misses}\n")
 
 if __name__ == "__main__":
     main()

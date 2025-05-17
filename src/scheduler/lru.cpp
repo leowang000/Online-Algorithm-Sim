@@ -46,7 +46,7 @@ class LRUScheduler : public Scheduler {
             auto result = Result(requests);
 
             // auto unique_set = std :: set<uint64_t>();
-            
+            // std::ofstream ofs("workspace/miss-time/prn0-lru.txt");
             // uint32_t counter = 0;
             for (auto &request : requests) {
                 // counter++;
@@ -109,6 +109,7 @@ class LRUScheduler : public Scheduler {
                 // if (counter % 10000 == 0) {
                 //     std :: cerr << "Cache misses: " << result.cache_misses << " Unique objects: " << unique_set.size() << std :: endl;
                 // }
+                // ofs << counter - 1 << "\t" << result.cache_misses << "\n";
             }
 
             return result;

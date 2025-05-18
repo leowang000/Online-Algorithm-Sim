@@ -1,6 +1,6 @@
-algorithm: LRU
+algorithm: LRUSVM
 dataset_path: dataset
 output_dir: output
 dataset_url: https://ftp.pdl.cmu.edu/pub/datasets/twemcacheWorkload/cacheDatasets/msr/
-num_to_test: 1
-cache_size: 4
+num_to_test: 10
+cache_size: 8

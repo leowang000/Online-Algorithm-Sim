@@ -6,3 +6,4 @@ from .lfu import LFU
 from .marking import Marking
 from .opt import OPT
 from .svm import SVM
+from .lrusvm import LRUSVM

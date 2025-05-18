@@ -14,11 +14,11 @@
 
 #include "scheduler.hpp"
 
-bool debug = false;
-
 struct SVMScheduler : Scheduler {
     static const uint64_t kISVMCount = 2048;
     static const uint64_t kHistoryScale = 8;
+    static const uint64_t kTimeSlice = 100000;
+    static const uint64_t kTest = 5000;
 
     struct OPTGen {
         std::map<uint64_t, int64_t> last_access_time_;
@@ -170,68 +170,58 @@ struct SVMScheduler : Scheduler {
         std::cout << "Total requests: " << requests.size() << std::endl;
         Result result(requests);
         uint64_t cnt = 0;
+        uint64_t svm_misses = 0, lru_misses = 0;
         // std::ofstream ofs("workspace/miss-time/prn0-svm.txt");
         for (const auto &request: requests) {
-            if (cnt == 10) {
-                debug = false;
+            if (cnt % kTimeSlice == 0) {
+                svm_misses = 0;
+                lru_misses = 0;
             }
-            if (cnt == requests.size() - 10) {
-                debug = false;
+            if (cnt % kTimeSlice == 2 * kTest) {
+                std::cout << "svm: " << svm_misses << "\tlru: " << lru_misses << std::endl;
             }
             if (cnt++ % (requests.size() / 100) == 0) {
                 std::cout << "Processing " << (cnt / (requests.size() / 100)) << "%" << std::endl;
             }
-            assert(opt_gen_.last_access_time_.size() <= OPTGen::kHistoryScale * cache_size);
+            assert(opt_gen_.last_access_time_.size() <= kHistoryScale * cache_size);
             assert(opt_gen_.access_queue_.size() == opt_gen_.last_access_time_.size());
             assert(cache_.cache_.size() <= cache_size);
             assert(cache_.obj_cache_map_.size() == cache_.cache_.size());
-            if (debug) {
-                std::cout << "------------------------------" << std::endl;
-                std::cout << "request obj_id: " << request.obj_id << std::endl;
-                std::cout << "cache before replacing:" << std::endl;
-                for (const auto &cache_line: cache_.cache_) {
-                    std::cout << "\tobj_id: " << cache_line.obj_id_ << "\tfriendliness: " << cache_line.friendliness_ << std::endl;
-                }
-            }
             if (!cache_.Contains(request.obj_id)) {
-                if (debug) {
-                    std::cout << "cache miss" << std::endl;
-                }
                 result.cache_misses++;
+                if (cnt % kTimeSlice < kTest && cnt % kTimeSlice >= kTest / 5) {
+                    svm_misses++;
+                } else if (cnt % kTimeSlice < 2 * kTest && cnt % kTimeSlice >= kTest + kTest / 5) {
+                    lru_misses++;
+                }
             }
             int64_t friendliness = isvm_table_[Hash(request.obj_id)].Predict(pchr_);
-            if (friendliness >= 60) {
-                friendliness = 3;
-            } else if (friendliness >= 0) {
-                friendliness = 2;
+            if (cnt % kTimeSlice < kTest) {
+                if (friendliness >= 60) {
+                    friendliness = 2;
+                } else if (friendliness >= 0) {
+                    friendliness = 1;
+                } else {
+                    friendliness = 0;
+                }
+            } else if (cnt % kTimeSlice < 2 * kTest) {
+                friendliness = 0;
             } else {
-                friendliness = 1;
+                if (lru_misses <= 0.95 * svm_misses) {
+                    friendliness = 0;
+                } else {
+                    if (friendliness >= 60) {
+                        friendliness = 2;
+                    } else if (friendliness >= 0) {
+                        friendliness = 1;
+                    } else {
+                        friendliness = 0;
+                    }
+                }
             }
             cache_.Insert(request.obj_id, friendliness, opt_gen_.time_ + 1);
             bool is_opt_hit = opt_gen_.IsOPTHit(request.obj_id);
-            if (debug) {
-                std::cout << "using isvm " << Hash(request.obj_id) << " to predict" << std::endl;
-                std::cout << "predict result: " << friendliness << std::endl;
-                std::cout << "cache after replacing:" << std::endl;
-                for (const auto &cache_line: cache_.cache_) {
-                    std::cout << "\tobj_id: " << cache_line.obj_id_ << "\tfriendliness: " << cache_line.friendliness_ << std::endl;
-                }
-                std::cout << "OPTgen output: " << (is_opt_hit ? "true" : "false") << std::endl;
-                std::cout << "isvm before update:";
-                for (auto w: isvm_table_[Hash(request.obj_id)].weights_) {
-                    std::cout << (int) w << "\t";
-                }
-                std::cout << std::endl;
-            }
             isvm_table_[Hash(request.obj_id)].Update(pchr_, is_opt_hit);
-            if (debug) {
-                std::cout << "isvm after update:";
-                for (auto w: isvm_table_[Hash(request.obj_id)].weights_) {
-                    std::cout << (int) w << "\t";
-                }
-                std::cout << std::endl;
-                std::cout << "------------------------------" << std::endl;
-            }
             pchr_.Insert(request.obj_id);
             // ofs << opt_gen_.time_ << "\t" << result.cache_misses << "\n";
         }

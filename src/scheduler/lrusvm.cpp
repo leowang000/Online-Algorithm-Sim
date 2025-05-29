@@ -221,8 +221,22 @@ struct LRUSVMScheduler : Scheduler {
             } else {
                 friendliness = 0;
             }
-            lru_.cache_.Insert(request.obj_id, 0, svm_.opt_gen_.time_ + 1);
-            svm_.cache_.Insert(request.obj_id, friendliness, svm_.opt_gen_.time_ + 1);
+            bool inserted = false;
+            if (svm_.cache_.Contains(request.obj_id) || svm_.cache_.cache_.size() < cache_size) {
+                svm_.cache_.Insert(request.obj_id, friendliness, svm_.opt_gen_.time_ + 1);
+                inserted = true;
+            }
+            if (lru_.cache_.Contains(request.obj_id) || lru_.cache_.cache_.size() < cache_size) {
+                lru_.cache_.Insert(request.obj_id, 0, svm_.opt_gen_.time_ + 1);
+                inserted = true;
+            }
+            if (!inserted) {
+                if (SVMScheduler::Hash(request.obj_id) % 4 == 0) {
+                    lru_.cache_.Insert(request.obj_id, 0, svm_.opt_gen_.time_ + 1);
+                } else {
+                    svm_.cache_.Insert(request.obj_id, friendliness, svm_.opt_gen_.time_ + 1);
+                }
+            }
             bool is_opt_hit = svm_.opt_gen_.IsOPTHit(request.obj_id);
             svm_.isvm_table_[SVMScheduler::Hash(request.obj_id)].Update(svm_.pchr_, is_opt_hit);
             svm_.pchr_.Insert(request.obj_id);

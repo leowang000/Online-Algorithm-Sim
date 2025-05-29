@@ -17,8 +17,8 @@
 struct SVMScheduler : Scheduler {
     static const uint64_t kISVMCount = 2048;
     static const uint64_t kHistoryScale = 8;
-    static const uint64_t kTimeSlice = 100000;
-    static const uint64_t kTest = 5000;
+    static const uint64_t kTimeSlice = 200000;
+    static const uint64_t kTest = 10000;
 
     struct OPTGen {
         std::map<uint64_t, int64_t> last_access_time_;

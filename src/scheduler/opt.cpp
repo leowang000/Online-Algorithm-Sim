@@ -45,7 +45,6 @@ class OPTScheduler : public Scheduler {
         Result run(std :: vector<Request>& requests) {
             // Initialize the cache misses
             auto result = Result(requests);
-            
             // uint32_t counter = 0;
             for (auto &request : requests) {
                 auto obj_id = request.obj_id;
@@ -97,7 +96,6 @@ class OPTScheduler : public Scheduler {
                 this -> cache.insert(obj);
                 this -> cache_set.insert(obj);
             }
-
             return result;
         }
 };

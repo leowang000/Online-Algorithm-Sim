@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 定义算法和缓存大小的数组
-algorithms=("LRUSVM")
+algorithms=("SVM")
 cache_sizes=(4 8 16 32 64 512)
 
 # 遍历所有算法
